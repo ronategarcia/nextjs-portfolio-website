@@ -1,19 +1,30 @@
 import React from "react";
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="footer border z-10 border-t-[#33353F] border-l-transparent 
-      border-r-transparent border-b-transparent text-white mb-auto">
-      <div className="container flex p-2 justify-between">
-        <Image
-          src="/images/logo-image.png"
-          alt="logo image"
-          width={150}
-          height={150}
-          className="ml-10"
-        />
-        <p className="text-slate-600 mt-10 mr-12 md:mr-2">All rights reserved.</p>
+    <footer className="border-t border-foreground/10 mt-auto">
+      <div className="max-w-6xl mx-auto px-4 md:px-8 py-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg overflow-hidden">
+              <Image
+                src="/images/portfolio_logo.png"
+                alt="logo"
+                width={32}
+                height={32}
+                className="w-full h-full object-cover invert"
+              />
+            </div>
+            <span className="text-foreground font-medium">Rodrigo</span>
+          </Link>
+          <p className="text-foreground-tertiary text-sm">
+            &copy; {currentYear} Rodrigo Onate
+          </p>
+        </div>
       </div>
     </footer>
   );

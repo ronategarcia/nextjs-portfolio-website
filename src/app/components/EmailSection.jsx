@@ -3,134 +3,105 @@ import React, { useState } from "react";
 import { AiFillGithub, AiFillLinkedin, AiFillInstagram, AiFillTwitterCircle } from 'react-icons/ai';
 import Link from 'next/link';
 
+const socialLinks = [
+  { href: 'https://github.com/ronategarcia', icon: AiFillGithub, label: 'GitHub' },
+  { href: 'https://www.linkedin.com/in/rodrigo-onate/', icon: AiFillLinkedin, label: 'LinkedIn' },
+  { href: 'https://www.instagram.com/rorroalonso_/', icon: AiFillInstagram, label: 'Instagram' },
+];
+
 const EmailSection = () => {
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
     const data = {
       email: e.target.email.value,
       subject: e.target.subject.value,
       message: e.target.message.value,
     };
-    const JSONdata = JSON.stringify(data);
-    const endpoint = "/api/send";
 
-    // Form the request for sending data to the server.
-    const options = {
-      // The method is POST because we are sending data.
-      method: "POST",
-      // Tell the server we're sending JSON.
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // Body of the request is the JSON data we created above.
-      body: JSONdata,
-    };
-
-    const response = await fetch(endpoint, options);
-    const resData = await response.json();
-
-    if (response.status === 200) {
-      console.log("Message sent.");
-      setEmailSubmitted(true);
+    try {
+      const response = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (response.status === 200) setEmailSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <section
-      id="contact"
-      className="grid md:grid-cols-2 my-12 md:my-12 py-24 gap-4 relative"
-    >
-      <div className="bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-900 to-transparent rounded-full h-80 w-80 z-0 blur-lg absolute top-3/4 -left-4 transform -translate-x-1/2 -translate-1/2"></div>
-      <div className="z-10">
-        <h5 className="text-xl font-bold text-white my-2">
-          Let&apos;s Connect
-        </h5>
-        <p className="text-[#ADB7BE] mb-4 max-w-md">
-          {" "}
-          I&apos;m currently looking for new opportunities, my inbox is always
-          open. Whether you have a question or just want to chat, I&apos;ll
-          try my best to get back to you!
-        </p>
-        <div className="socials flex flex-row gap-2 text-4xl">
-        <Link href='https://github.com/ronategarcia' target="_blank">
-            <AiFillGithub />
-          </Link>
-          <Link href='https://www.linkedin.com/in/rodrigo-onate/' target="_blank">
-            <AiFillLinkedin />
-          </Link>
-          <Link href='https://www.instagram.com/rorroalonso_/' target="_blank">
-            <AiFillInstagram />
-          </Link>
-          <Link href='https://twitter.com/ronategarcia' target="_blank">
-            <AiFillTwitterCircle />
-          </Link>
-        </div>
-      </div>
-      <div>
-        {emailSubmitted ? (
-          <p className="text-green-500 text-sm mt-2">
-            Email sent successfully!
+    <div className="animate-on-scroll w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
+        <div>
+          <p className="text-foreground-secondary mb-8 text-lg leading-relaxed">
+            Looking for new opportunities. Feel free to reach out!
           </p>
-        ) : (
-          <form className="flex flex-col" onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <label
-                htmlFor="email"
-                className="text-white block mb-2 text-sm font-medium"
+          <div className="flex flex-wrap gap-4">
+            {socialLinks.map((social) => (
+              <Link
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                className="flex items-center gap-3 px-5 py-3 glass-card rounded-xl text-foreground-secondary hover:text-primary-500 transition-colors"
               >
-                Your email
-              </label>
+                <social.icon className="w-6 h-6" />
+                <span className="text-base">{social.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          {emailSubmitted ? (
+            <div className="glass-card rounded-xl p-8 text-center">
+              <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p className="text-foreground-secondary text-lg">Message sent!</p>
+            </div>
+          ) : (
+            <form className="glass-card rounded-xl p-6 space-y-5" onSubmit={handleSubmit}>
               <input
                 name="email"
                 type="email"
-                id="email"
                 required
-                className="bg-[#18191E] border border-[#33353F] placeholder-[#9CA2A9] text-gray-100 text-sm rounded-lg block w-full p-2.5"
-                placeholder="jacob@google.com"
+                className="input-field w-full text-base"
+                placeholder="Your email"
               />
-            </div>
-            <div className="mb-6">
-              <label
-                htmlFor="subject"
-                className="text-white block text-sm mb-2 font-medium"
-              >
-                Subject
-              </label>
               <input
                 name="subject"
                 type="text"
-                id="subject"
                 required
-                className="bg-[#18191E] border border-[#33353F] placeholder-[#9CA2A9] text-gray-100 text-sm rounded-lg block w-full p-2.5"
+                className="input-field w-full text-base"
                 placeholder="Subject"
               />
-            </div>
-            <div className="mb-6">
-              <label
-                htmlFor="message"
-                className="text-white block text-sm mb-2 font-medium"
-              >
-                Message
-              </label>
               <textarea
                 name="message"
-                id="message"
-                className="bg-[#18191E] border border-[#33353F] placeholder-[#9CA2A9] text-gray-100 text-sm rounded-lg block w-full p-2.5"
-                placeholder="Let's talk about..."
+                rows={4}
+                required
+                className="input-field w-full resize-none text-base"
+                placeholder="Message"
               />
-            </div>
-            <button
-              type="submit"
-              className="bg-primary-500 hover:bg-primary-600 text-white font-medium py-2.5 px-5 rounded-lg w-full"
-            >
-              Send Message
-            </button>
-          </form>
-        )}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn-primary w-full disabled:opacity-50 text-lg py-3"
+              >
+                {isSubmitting ? "Sending..." : "Send"}
+              </button>
+            </form>
+          )}
+        </div>
       </div>
-    </section>
+    </div>
   );
 };
 
